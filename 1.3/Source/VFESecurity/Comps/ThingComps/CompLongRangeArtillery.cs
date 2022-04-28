@@ -57,9 +57,28 @@ namespace VFESecurity
 
         private ArtilleryComp ArtilleryMapComp(Map map)
         {
-            if (map != null)
-                return Find.WorldObjects.AllWorldObjects.FirstOrDefault(o => o.Tile == map.Tile && o.GetComponent(typeof(ArtilleryComp)) != null).GetComponent<ArtilleryComp>();
-            return null;
+            Log.Message("Looking for map comp for " + this.ToStringSafe());
+            if (map == null)
+            {
+                Log.Message("But the map was null.");
+                return null;
+            }
+
+
+            var wo = Find.WorldObjects.AllWorldObjects.FirstOrDefault(o =>
+            {
+                Log.Message("Examining world object " + o.ToStringSafe());
+                return o.Tile == map.Tile && o.GetComponent(typeof(ArtilleryComp)) != null;
+            });
+
+            if (wo == null)
+            {
+                Log.Error("ArtilleryMapComp for invalid map " + map.ToStringSafe());
+            }
+
+            Log.Message("Trying to return map comp for world object " + wo.ToStringSafe());
+
+            return wo?.GetComponent<ArtilleryComp>();
         }
 
         public override void PostSpawnSetup(bool respawningAfterLoad)
